@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,61 +19,62 @@ public class EducacaoRepositoryTest {
     @Mock
     private EducacaoRepository educacaoRepository;
 
-    @InjectMocks
-    private Educacao educacao;
+    // Remove the unused variable
+    // @InjectMocks
+    // private Educacao educacao;
 
     @Test
     public void testFindById() {
         // Criar um objeto Educacao simulado
-        Educacao educacaoLocal = new Educacao();
-        educacaoLocal.setId(1L);
-        educacaoLocal.setCourse("Ciência da Computação");
-        educacaoLocal.setInstitution("Universidade X");
-
+        Educacao simulatedEducacao = new Educacao();
+        simulatedEducacao.setId(1L);
+        simulatedEducacao.setCourse("Ciência da Computação");
+        simulatedEducacao.setInstitution("Universidade X");
+    
         // Simular o comportamento do repositório
-        when(educacaoRepository.findById(1L)).thenReturn(Optional.of(educacao));
-
+        when(educacaoRepository.findById(1L)).thenReturn(Optional.of(simulatedEducacao));
+    
         // Chamar o método do repositório
         Optional<Educacao> result = educacaoRepository.findById(1L);
-
+    
         // Verificar se o resultado é o esperado
-        assertEquals(educacao, result.get());
+        assertEquals(simulatedEducacao, result.get());
     }
 
     @Test
     public void testSaveEducacao() {
         // Criar um objeto Educacao simulado
-        Educacao educacaoSimulado = new Educacao();
-        educacaoSimulado.setId(1L);
-        educacaoSimulado.setCourse("Ciência da Computação");
-        educacaoSimulado.setInstitution("Universidade X");
+        Educacao simulatedEducacao = new Educacao();
+        simulatedEducacao.setId(1L);
+        simulatedEducacao.setCourse("Ciência da Computação");
+        simulatedEducacao.setInstitution("Universidade X");
     
         // Simular o comportamento do repositório
-        when(educacaoRepository.save(any(Educacao.class))).thenReturn(educacaoSimulado);
+        when(educacaoRepository.save(any(Educacao.class))).thenReturn(simulatedEducacao);
     
         // Chamar o método de salvar do repositório
-        Educacao savedEducacao = educacaoRepository.save(educacaoSimulado);
+        Educacao savedEducacao = educacaoRepository.save(simulatedEducacao);
     
         // Verificar se o objeto retornado é o mesmo que foi salvo
-        assertEquals(educacaoSimulado, savedEducacao);
+        assertEquals(simulatedEducacao, savedEducacao);
     }
 
     @Test
     public void testUpdateEducacao() {
         // Criar um objeto Educacao simulado
-        Educacao educacaoSimulado = new Educacao();
-        educacaoSimulado.setId(1L);
-        educacaoSimulado.setCourse("Ciência da Computação");
-        educacaoSimulado.setInstitution("Universidade X");
+        Educacao simulatedEducacao = new Educacao();
+        simulatedEducacao.setId(1L);
+        simulatedEducacao.setCourse("Ciência da Computação");
+        simulatedEducacao.setInstitution("Universidade X");
     
         // Simular o comportamento do repositório
-        when(educacaoRepository.save(any(Educacao.class))).thenReturn(educacaoSimulado);
+        when(educacaoRepository.save(any(Educacao.class))).thenReturn(simulatedEducacao);
     
         // Chamar o método de atualizar do repositório
-        Educacao updatedEducacao = educacaoRepository.save(educacaoSimulado);
+        Educacao updatedEducacao = educacaoRepository.save(simulatedEducacao);
     
         // Verificar se o objeto retornado é o mesmo que foi atualizado
-        assertEquals(educacaoSimulado, updatedEducacao);
+        assertEquals(simulatedEducacao, updatedEducacao);
     }
 
     @Test
