@@ -1,20 +1,25 @@
 package com.example.curriculo_api.controller;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus; // Add this import statement
-import org.springframework.http.ResponseEntity; // Add this import statement
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.curriculo_api.model.Educacao;
 import com.example.curriculo_api.repository.EducacaoRepository;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class EducacaoControllerTest {
+
+    private MockMvc mockMvc;
 
     @Mock
     private EducacaoRepository educacaoRepository;
@@ -22,22 +27,24 @@ public class EducacaoControllerTest {
     @InjectMocks
     private EducacaoController educacaoController;
 
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(educacaoController).build();
+    }
+
     @Test
-    public void testGetEducacaoById() {
-        // Criar um objeto Educacao simulado
+    void shouldCreateEducacao() throws Exception {
         Educacao educacao = new Educacao();
         educacao.setId(1L);
         educacao.setInstitution("Universidade X");
         educacao.setCourse("Ciência da Computação");
-
-        // Simular o comportamento do repositório
-        when(educacaoRepository.findById(1L)).thenReturn(java.util.Optional.of(educacao));
-
-        // Chamar o método do controlador
-        ResponseEntity<Educacao> response = educacaoController.getEducacaoById(1L);
-
-        // Verificar se a resposta está correta
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(educacao, response.getBody());
+        
+        
+        when(educacaoRepository.save(any(Educacao.class))).thenReturn(educacao);
+        
+        mockMvc.perform(post("/educacao")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"institution\":\"Universidade X\", \"course\":\"Bacharelado\"}"))
+                .andExpect(status().isOk());
     }
 }

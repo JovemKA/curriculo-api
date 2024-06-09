@@ -1,20 +1,26 @@
 package com.example.curriculo_api.controller;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.curriculo_api.model.Habilidade;
 import com.example.curriculo_api.repository.HabilidadeRepository;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class HabilidadeControllerTest {
+
+    private MockMvc mockMvc;
 
     @Mock
     private HabilidadeRepository habilidadeRepository;
@@ -22,22 +28,24 @@ public class HabilidadeControllerTest {
     @InjectMocks
     private HabilidadeController habilidadeController;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(habilidadeController).build();
+    }
+
     @Test
-    public void testGetHabilidadeById() {
-        // Criar um objeto Habilidade simulado
+    void shouldCreateHabilidade() throws Exception {
         Habilidade habilidade = new Habilidade();
         habilidade.setId(1L);
         habilidade.setName("Java");
         habilidade.setLevel("Avançado");
 
-        // Simular o comportamento do repositório
-        when(habilidadeRepository.findById(1L)).thenReturn(java.util.Optional.of(habilidade));
+        when(habilidadeRepository.save(any(Habilidade.class))).thenReturn(habilidade);
 
-        // Chamar o método do controlador
-        ResponseEntity<Habilidade> response = habilidadeController.getHabilidadeById(1L);
-
-        // Verificar se a resposta está correta
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(habilidade, response.getBody());
+        mockMvc.perform(post("/habilidade")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Java\", \"level\":\"Avançado\"}"))
+                .andExpect(status().isOk());
     }
 }

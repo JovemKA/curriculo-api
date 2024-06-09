@@ -1,20 +1,26 @@
 package com.example.curriculo_api.controller;
 
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.curriculo_api.model.Experiencia;
 import com.example.curriculo_api.repository.ExperienciaRepository;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class ExperienciaControllerTest {
+
+    private MockMvc mockMvc;
 
     @Mock
     private ExperienciaRepository experienciaRepository;
@@ -22,22 +28,24 @@ public class ExperienciaControllerTest {
     @InjectMocks
     private ExperienciaController experienciaController;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(experienciaController).build();
+    }
+
     @Test
-    public void testGetExperienciaById() {
-        // Criar um objeto Experiencia simulado
+    void shouldCreateExperiencia() throws Exception {
         Experiencia experiencia = new Experiencia();
         experiencia.setId(1L);
         experiencia.setCompany("Empresa Y");
-        experiencia.setPosition("Desenvolvedor");
+        experiencia.setPosition("Desenvolvedor Java");
 
-        // Simular o comportamento do repositório
-        when(experienciaRepository.findById(1L)).thenReturn(java.util.Optional.of(experiencia));
+        when(experienciaRepository.save(any(Experiencia.class))).thenReturn(experiencia);
 
-        // Chamar o método do controlador
-        ResponseEntity<Experiencia> response = experienciaController.getExperienciaById(1L);
-
-        // Verificar se a resposta está correta
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(experiencia, response.getBody());
+        mockMvc.perform(post("/experiencia")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"company\":\"Empresa Y\", \"position\":\"Desenvolvedor\"}"))
+                .andExpect(status().isOk());
     }
 }
