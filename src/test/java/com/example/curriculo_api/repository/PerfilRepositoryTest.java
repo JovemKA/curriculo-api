@@ -1,86 +1,30 @@
 package com.example.curriculo_api.repository;
 
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.any;
-import org.mockito.Mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.example.curriculo_api.model.Perfil;
 
-@RunWith(MockitoJUnitRunner.class)
+@DataJpaTest
 public class PerfilRepositoryTest {
 
-    @Mock
+    @Autowired
     private PerfilRepository perfilRepository;
 
-    // Remove the unused variable
-
     @Test
-    public void testFindById() {
-        // Criar um objeto Perfil simulado
-        Perfil simulatedPerfil = new Perfil();
-        simulatedPerfil.setId(1L);
-        simulatedPerfil.setName("Nome Sobrenome");
-        simulatedPerfil.setEmail("email@example.com");
+    void shouldSavePerfil() {
+        Perfil perfil = new Perfil();
+        perfil.setName("João Silva");
+        perfil.setEmail("joao.silva@gmail.com");
+        perfil.setPhone("(81) 9 9999-9999");
+        perfil.setSummary("Desenvolvedor Java");
 
-        // Simular o comportamento do repositório
-        when(perfilRepository.findById(1L)).thenReturn(Optional.of(simulatedPerfil));
+        Perfil savedPerfil = perfilRepository.save(perfil);
 
-        // Chamar o método do repositório
-        Optional<Perfil> result = perfilRepository.findById(1L);
-
-        // Verificar se o resultado é o esperado
-        assertEquals(simulatedPerfil, result.get());
-    }
-
-    @Test
-    public void testSavePerfil() {
-        // Criar um objeto Perfil simulado
-        Perfil simulatedPerfil = new Perfil();
-        simulatedPerfil.setId(1L);
-        simulatedPerfil.setName("Nome Sobrenome");
-        simulatedPerfil.setEmail("email@example.com");
-
-        // Simular o comportamento do repositório
-        when(perfilRepository.save(any(Perfil.class))).thenReturn(simulatedPerfil);
-
-        // Chamar o método de salvar do repositório
-        Perfil savedPerfil = perfilRepository.save(simulatedPerfil);
-
-        // Verificar se o objeto retornado é o mesmo que foi salvo
-        assertEquals(simulatedPerfil, savedPerfil);
-    }
-
-    @Test
-    public void testUpdatePerfil() {
-        // Criar um objeto Perfil simulado
-        Perfil simulatedPerfil = new Perfil();
-        simulatedPerfil.setId(1L);
-        simulatedPerfil.setName("Nome Sobrenome");
-        simulatedPerfil.setEmail("email@example.com");
-
-        // Simular o comportamento do repositório
-        when(perfilRepository.save(any(Perfil.class))).thenReturn(simulatedPerfil);
-
-        // Chamar o método de atualizar do repositório
-        Perfil updatedPerfil = perfilRepository.save(simulatedPerfil);
-
-        // Verificar se o objeto retornado é o mesmo que foi atualizado
-        assertEquals(simulatedPerfil, updatedPerfil);
-    }
-
-    @Test
-    public void testDeletePerfil() {
-        // Chamar o método de deletar do repositório
-        perfilRepository.deleteById(1L);
-
-        // Verificar se o método deleteById foi chamado com o ID correto
-        verify(perfilRepository).deleteById(1L);
+        assertThat(savedPerfil).isNotNull();
+        assertThat(savedPerfil.getId()).isNotNull();
+        assertThat(savedPerfil.getName()).isEqualTo("João Silva");
     }
 }
